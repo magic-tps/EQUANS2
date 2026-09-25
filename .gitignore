@@ -1,0 +1,15 @@
+data/
+*.xlsx
+*.xls
+*.csv
+*.joblib
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+.streamlit/secrets.toml
+outputs/
+models/
+reports/private/
+reports/
+*.pyc
