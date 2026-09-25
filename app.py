@@ -2,7 +2,7 @@ from __future__ import annotations
 import streamlit as st
 from dashboard import data,theme,operations,research,upload
 
-st.set_page_config(page_title="Volt Patrol | Inteligencia de inspección",page_icon="⚡",layout="wide",initial_sidebar_state="expanded")
+st.set_page_config(page_title="Volt Patrol | Inteligencia de inspección",page_icon="⚡",layout="wide",initial_sidebar_state="auto")
 theme.install()
 PAGES=["Centro de control","Priorizar inspecciones","Investigar suministro","Métodos observados","Red y pérdidas","Laboratorio de modelos","Evaluar nueva data","Calidad y trazabilidad"]
 bundle=data.model()
