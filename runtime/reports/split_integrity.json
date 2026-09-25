@@ -1,0 +1,22 @@
+{
+  "trained_at": "2026-09-25T13:47:40.592315+00:00",
+  "overlapping_supplies": 0,
+  "duplicate_supplies": 0,
+  "counts": {
+    "selection": {
+      "positive": 1014,
+      "unlabeled": 444,
+      "supplies": 1458
+    },
+    "test": {
+      "positive": 1954,
+      "unlabeled": 931,
+      "supplies": 2885
+    },
+    "train": {
+      "positive": 5573,
+      "unlabeled": 2493,
+      "supplies": 8066
+    }
+  }
+}

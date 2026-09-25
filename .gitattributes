@@ -1,0 +1,7 @@
+# Preserve runtime bytes across Windows and Linux; the manifest hashes exact bytes.
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+runtime/** -text

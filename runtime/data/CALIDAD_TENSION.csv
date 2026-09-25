@@ -1,0 +1,83 @@
+Año,Mes,Periodo,Diagnóstico,SET_ID,ALIMENTADOR_ID,SED_ID,LLAVE_ID
+2020,Diciembre,16/12/2020 14:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_23,ALIM2_046,SED2_04048,LLAVE2_15
+2020,Octubre,29/10/2020 11:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_31,ALIM2_153,SED2_01512,LLAVE2_19
+2020,Octubre,06/10/2020 10:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_36,ALIM2_286,SED2_08192,LLAVE2_15
+2020,Setiembre,06/10/2020 13:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_35,ALIM2_194,SED2_06533,LLAVE2_19
+2020,Setiembre,30/09/2020 16:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_10,ALIM2_219,SED2_04038,LLAVE2_19
+2020,Setiembre,30/09/2020 16:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_10,ALIM2_219,SED2_04038,LLAVE2_09
+2021,Agosto,16/08/2021 15:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_27,ALIM2_377,SED2_05074,LLAVE2_19
+2021,Diciembre,07/12/2021 17:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_22,ALIM2_252,SED2_01253,LLAVE2_19
+2021,Diciembre,22/12/2021 15:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_32,ALIM2_068,SED2_02151,LLAVE2_21
+2021,Diciembre,22/12/2021 15:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_32,ALIM2_068,SED2_02151,LLAVE2_21
+2021,Febrero,12/02/2021 04:15 al 19/02/2021 04:00,Mala Calidad de Tensión por Sobretensión,SET2_16,ALIM2_164,SED2_02218,LLAVE2_15
+2021,Febrero,11/02/2021 17:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_12,ALIM2_053,SED2_05247,LLAVE2_19
+2021,Julio,14/07/2021 11:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_32,ALIM2_068,SED2_02151,LLAVE2_21
+2021,Julio,16/07/2021 08:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_36,ALIM2_238,SED2_00697,LLAVE2_14
+2021,Marzo,12/03/2021 02:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_12,ALIM2_100,SED2_07677,LLAVE2_19
+2021,Marzo,09/03/2021 16:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_13,ALIM2_080,SED2_06342,LLAVE2_15
+2021,Noviembre,29/11/2021 14:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión y Subtensión,SET2_38,ALIM2_045,SED2_05960,LLAVE2_02
+2021,Noviembre,19/11/2021 13:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión y Subtensión,SET2_09,ALIM2_013,SED2_00675,LLAVE2_09
+2022,Abril,06/04/2022 09:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_31,ALIM2_356,SED2_06744,LLAVE2_09
+2022,Agosto,29/08/2022 09:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_02,ALIM2_304,SED2_07662,LLAVE2_09
+2022,Agosto,04/08/2022 15:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_33,ALIM2_318,SED2_08052,LLAVE2_09
+2022,Agosto,03/08/2022 21:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión y Subtensión,SET2_04,ALIM2_161,SED2_05216,LLAVE2_15
+2022,Agosto,01/08/2022 16:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_26,ALIM2_367,SED2_04062,LLAVE2_21
+2022,Diciembre,22/12/2022 10:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión y Subtensión,SET2_18,ALIM2_384,SED2_09314,LLAVE2_19
+2022,Febrero,24/02/2022 15:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_10,ALIM2_066,SED2_05202,LLAVE2_19
+2022,Julio,27/07/2022 09:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_09,ALIM2_013,SED2_09226,LLAVE2_09
+2022,Junio,07/06/2022 00:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_12,ALIM2_136,SED2_07451,LLAVE2_15
+2022,Marzo,10/03/2022 16:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_22,ALIM2_252,SED2_08540,LLAVE2_19
+2022,Marzo,08/03/2022 16:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_46,ALIM2_270,SED2_00994,LLAVE2_02
+2022,Marzo,03/03/2022 13:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_09,ALIM2_013,SED2_09226,LLAVE2_09
+2022,Marzo,04/03/2022 09:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_47,ALIM2_461,SED2_09805,LLAVE2_19
+2022,Octubre,10/10/2022 14:00 al 17/10/2022 13:44,Mala Calidad de Tensión por Sobretensión,SET2_27,ALIM2_352,SED2_01811,LLAVE2_09
+2023,Abril,20/04/2023 08:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_06,ALIM2_427,SED2_04998,LLAVE2_15
+2023,Abril,20/04/2023 08:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_06,ALIM2_427,SED2_04998,LLAVE2_15
+2023,Agosto,03/08/2023 23:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_09,ALIM2_464,SED2_05320,LLAVE2_09
+2023,Agosto,04/08/2023 16:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_31,ALIM2_193,SED2_01071,LLAVE2_15
+2023,Diciembre,27/12/2023 13:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_22,ALIM2_108,SED2_00741,LLAVE2_19
+2023,Diciembre,27/12/2023 14:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_22,ALIM2_108,SED2_01988,LLAVE2_19
+2023,Diciembre,27/12/2023 10:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_02,ALIM2_474,SED2_08791,LLAVE2_19
+2023,Diciembre,29/12/2023 10:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_21,ALIM2_420,SED2_08450,LLAVE2_19
+2023,Enero,30/01/2023 14:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_31,ALIM2_263,SED2_00174,LLAVE2_21
+2023,Enero,20/01/2023 11:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_43,ALIM2_135,SED2_05129,LLAVE2_15
+2023,Enero,20/01/2023 11:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_43,ALIM2_135,SED2_05129,LLAVE2_15
+2023,Febrero,28/02/2023 09:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_37,ALIM2_056,SED2_02340,LLAVE2_09
+2023,Febrero,06/02/2023 11:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_23,ALIM2_316,SED2_06467,LLAVE2_19
+2023,Julio,11/07/2023 10:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_42,ALIM2_243,SED2_07070,LLAVE2_19
+2023,Junio,21/06/2023 16:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_46,ALIM2_038,SED2_08451,LLAVE2_09
+2023,Marzo,07/03/2023 04:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_20,ALIM2_277,SED2_06706,LLAVE2_19
+2023,Marzo,25/03/2023 11:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_21,ALIM2_420,SED2_07113,LLAVE2_09
+2023,Marzo,01/03/2023 11:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_10,ALIM2_402,SED2_00349,LLAVE2_19
+2023,Marzo,09/03/2023 16:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_23,ALIM2_361,SED2_09756,LLAVE2_15
+2023,Marzo,09/03/2023 16:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_23,ALIM2_361,SED2_09756,LLAVE2_15
+2023,Marzo,09/03/2023 12:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_23,ALIM2_046,SED2_01544,LLAVE2_19
+2023,Noviembre,02/11/2023 10:15 al 09/11/2023 10:00,Mala Calidad de Tensión por Sobretensión y Subtensión,SET2_12,ALIM2_363,SED2_04819,LLAVE2_09
+2023,Noviembre,23/11/2023 14:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_35,ALIM2_217,SED2_01502,LLAVE2_19
+2023,Octubre,06/10/2023 14:30 al 13/10/2023 14:15,Mala Calidad de Tensión por Sobretensión,SET2_42,ALIM2_110,SED2_03493,LLAVE2_09
+2023,Setiembre,08/09/2023 12:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_09,ALIM2_105,SED2_03214,LLAVE2_09
+2024,Abril,02/04/2024 12:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_06,ALIM2_169,SED2_03563,LLAVE2_19
+2024,Enero,03/01/2024 13:45 al 10/01/2024 13:30,Mala Calidad de Tensión por Subtensión,SET2_13,ALIM2_092,SED2_02956,LLAVE2_19
+2024,Enero,05/01/1996 14:30 al 12/01/1996 14:30,Mala Calidad de Tensión por Subtensión,SET2_13,ALIM2_456,SED2_02490,LLAVE2_15
+2024,Enero,05/01/1996 14:45 al 12/01/1996 14:30,Mala Calidad de Tensión por Subtensión,SET2_13,ALIM2_080,SED2_00565,LLAVE2_09
+2024,Enero,09/01/1996 09:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_09,ALIM2_312,SED2_03347,LLAVE2_09
+2024,Enero,09/01/1996 14:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_40,ALIM2_310,SED2_04692,LLAVE2_19
+2024,Junio,14/06/2024 10:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_16,ALIM2_173,SED2_08771,LLAVE2_09
+2024,Mayo,22/05/2024 14:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_33,ALIM2_416,SED2_08321,LLAVE2_19
+2024,Noviembre,20/11/2024 09:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_23,ALIM2_328,SED2_04840,LLAVE2_19
+2025,Abril,02/04/2025 09:30 al 09/04/2025 09:15,Mala Calidad de Tensión por Subtensión,SET2_33,ALIM2_237,SED2_00804,LLAVE2_19
+2025,Abril,02/04/2025 12:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_33,ALIM2_101,SED2_01518,LLAVE2_15
+2025,Abril,02/04/2025 12:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_33,ALIM2_101,SED2_01518,LLAVE2_15
+2025,Abril,02/04/2025 11:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_29,ALIM2_220,SED2_06900,LLAVE2_09
+2025,Abril,21/04/2025 15:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión y Subtensión,SET2_35,ALIM2_194,SED2_07902,LLAVE2_09
+2025,Julio,08/07/2025 12:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_09,ALIM2_189,SED2_06459,LLAVE2_21
+2025,Julio,22/07/2025 15:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_32,ALIM2_060,SED2_01247,LLAVE2_19
+2025,Junio,06/06/2025 11:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_29,ALIM2_357,SED2_05235,LLAVE2_19
+2025,Junio,18/06/2025 14:45 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_33,ALIM2_237,SED2_05346,LLAVE2_19
+2025,Junio,19/06/2025 12:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_33,ALIM2_416,SED2_01159,LLAVE2_19
+2025,Mayo,29/05/2025 11:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_41,ALIM2_030,SED2_06510,LLAVE2_21
+2025,Mayo,28/05/2025 15:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_31,ALIM2_153,SED2_01512,LLAVE2_12
+2025,Noviembre,18/11/2025 10:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_02,ALIM2_482,SED2_03170,LLAVE2_15
+2025,Noviembre,18/11/2025 14:15 al 00/01/1900 00:00,Mala Calidad de Tensión por Subtensión,SET2_31,ALIM2_263,SED2_08745,LLAVE2_19
+2025,Setiembre,25/09/2025 00:00 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_35,ALIM2_194,SED2_03850,LLAVE2_19
+2025,Setiembre,01/09/2025 14:30 al 00/01/1900 00:00,Mala Calidad de Tensión por Sobretensión,SET2_29,ALIM2_120,SED2_06232,LLAVE2_09

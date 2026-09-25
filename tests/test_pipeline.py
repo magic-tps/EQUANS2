@@ -16,6 +16,7 @@ from src.labels import classify_events
 from src.predict import rank,score_features
 from src.preprocess import before_cutoff,monthly_long
 from src.utils import DATA_FILES
+from src.artifacts import resolve
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -70,7 +71,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_peer_reference_excludes_self(self):
         frame=sample()
-        frame["cutoff"]=pd.Timestamp("2026-01-01")
+        frame["cutoff"]=pd.Timestamp("2025-04-01")
         feature=build_features(frame,monthly_long(frame,2025))
         self.assertAlmostEqual(feature.loc[0,"peer_difference"],
                                feature.loc[0,"w6_median"]-feature.loc[1,"w6_median"])
@@ -106,10 +107,11 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(ValueError):read_upload("empty.csv",b"")
 
     def test_bundle_roundtrip_and_inference(self):
-        path=ROOT/"models/final_model.joblib"
+        path=resolve(ROOT,"models/final_model.joblib")
         if not path.exists():self.skipTest("Modelo local aún no entrenado")
         bundle=joblib.load(path)
-        frame=pd.read_excel(ROOT/"data/ALIMENTADOR_2025.xlsx").head(5)
+        source=resolve(ROOT,"data/ALIMENTADOR_2025.xlsx")
+        frame=(pd.read_excel(source) if source.suffix==".xlsx" else pd.read_csv(source)).head(5)
         a=infer(bundle,frame,2025)
         with tempfile.TemporaryDirectory() as directory:
             copy=Path(directory)/"bundle.joblib"
@@ -120,24 +122,25 @@ class PipelineTests(unittest.TestCase):
         base=frame.copy()
         base["cutoff"]=pd.Timestamp("2026-01-01")
         features=build_features(base,monthly_long(base,2025))
-        local=rank(base,score_features(bundle,features),features.months_observed)
+        local=rank(base,score_features(bundle,features),features.months_observed,recent_months=features.w3_available)
         np.testing.assert_allclose(a.priority_score,local.priority_score,equal_nan=True)
 
     def test_ranking_covers_entire_target(self):
-        path=ROOT/"outputs/VOLT_PATROL_RANKING_COMPLETO.csv"
+        path=resolve(ROOT,"outputs/VOLT_PATROL_RANKING_COMPLETO.csv")
         if not path.exists():self.skipTest("Ranking local aún no generado")
-        target=pd.read_excel(ROOT/"data/ALIMENTADOR_2025.xlsx",usecols=["SUMINISTRO_ID"])
+        source=resolve(ROOT,"data/ALIMENTADOR_2025.xlsx")
+        target=(pd.read_excel(source) if source.suffix==".xlsx" else pd.read_csv(source))
         ranking=pd.read_csv(path)
         self.assertEqual(set(target.SUMINISTRO_ID),set(ranking.SUMINISTRO_ID))
         self.assertEqual(len(ranking),target.SUMINISTRO_ID.nunique())
-        self.assertEqual(len(pd.read_csv(ROOT/"outputs/VOLT_PATROL_TOP_76.csv")),76)
+        self.assertEqual(len(pd.read_csv(resolve(ROOT,"outputs/VOLT_PATROL_TOP_76.csv"))),76)
 
     def test_streamlit_pages_load(self):
         try:
             from streamlit.testing.v1 import AppTest
         except ImportError:
             self.skipTest("Streamlit no instalado")
-        for page_index in range(7):
+        for page_index in range(8):
             app=AppTest.from_file(str(ROOT/"app.py"),default_timeout=40).run()
             if page_index:
                 app.sidebar.radio[0].set_value(app.sidebar.radio[0].options[page_index]).run()

@@ -13,12 +13,17 @@ def validate(frame: pd.DataFrame) -> tuple[list[str],dict]:
         errors.append("Falta SUMINISTRO_ID")
     else:
         if frame.SUMINISTRO_ID.isna().any():errors.append("Hay SUMINISTRO_ID vacíos")
-        if frame.SUMINISTRO_ID.duplicated().any():errors.append("Hay SUMINISTRO_ID duplicados")
+        ids=frame.SUMINISTRO_ID.astype(str).str.strip()
+        if ids.eq("").any():errors.append("Hay SUMINISTRO_ID vacíos")
+        if ids.duplicated().any():errors.append("Hay SUMINISTRO_ID duplicados")
     months=find_month_columns(frame)
     complete=[]
     for n,fields in months.items():
         missing={"consumption","days","reading"}-set(fields)
-        if missing:errors.append(f"Mes {n}: faltan {', '.join(sorted(missing))}")
+        if missing:
+            from src.utils import MONTHS
+            labels={"consumption":"CONSUMO","days":"DIAS FACTURADO","reading":"FECHA LECTURA"}
+            errors.append("Faltan: "+", ".join(f"{labels[k]} {MONTHS[n-1]}" for k in sorted(missing)))
         else:
             complete.append(n)
             consumption=pd.to_numeric(frame[fields["consumption"]],errors="coerce")

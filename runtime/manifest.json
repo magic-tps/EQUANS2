@@ -1,0 +1,114 @@
+{
+  "model_version": "2.0.0",
+  "trained_at": "2026-09-25T13:47:40.592315+00:00",
+  "python": "3.14.7",
+  "dependencies": {
+    "pandas": "3.0.6",
+    "numpy": "2.5.3",
+    "scikit-learn": "1.9.1",
+    "catboost": "1.2.10",
+    "lightgbm": "4.7.0",
+    "joblib": "1.6.0",
+    "streamlit": "1.64.0",
+    "plotly": "7.1.0",
+    "openpyxl": "3.1.5"
+  },
+  "source_sha256": {
+    "ALIMENTADOR_2024.xlsx": "4ed7ac76b4feeac16910f337ef0cd32d7754cd283777437512d387b891e5d8d9",
+    "ALIMENTADOR_2025.xlsx": "71d8797a10a32d2c28d042648dbd7ce7d6b0e18fb4a192f9c7591cd1545c1225",
+    "BALANCE_SED.xlsx": "2da136cf4f0ba2981c63999fb53288d360086925989dbb61ea929082a972bbdb",
+    "POTENCIA_SED.xlsx": "19871767f6b4889df0dcab7cbef12b6c5dd4b95cc9da96580b9c06b448ed3821",
+    "FALLAS_SED.xlsx": "731b0d11934cbc97bcbeff37a07d59cae4ee4904acc63893978d90be69fe4233",
+    "CALIDAD_TENSION.xlsx": "513b71652a8236bf104cb65c7debefb920bfdbb6f3e44cf00b260a8feb667056"
+  },
+  "files": {
+    "data/ALIMENTADOR_2024.csv": {
+      "bytes": 2019909,
+      "sha256": "63aa9d55c074f21fcc8cfc4f721cc330fef1d746fdb6b255d90834d70ac60600"
+    },
+    "data/ALIMENTADOR_2025.csv": {
+      "bytes": 1570849,
+      "sha256": "af1d7c34452e24848d7ed86a97595908b02aeef3c21f2a1854f07691a86d36f4"
+    },
+    "data/BALANCE_SED.csv": {
+      "bytes": 3102547,
+      "sha256": "0e3fb6b3b2b41cfcb6cf21d2d0b5e8c92de9c051760e4256d178cb6951f6aaf5"
+    },
+    "data/CALIDAD_TENSION.csv": {
+      "bytes": 10848,
+      "sha256": "dc8142e010d49283b29887ecfa24a73fce569881f1763c0751442d6d73210d71"
+    },
+    "data/FALLAS_SED.csv": {
+      "bytes": 768543,
+      "sha256": "38be2dabfcd63f09da9e4258f5e50c146d050c96e367d2b2528cea3c5cc3825f"
+    },
+    "data/POTENCIA_SED.csv": {
+      "bytes": 361781,
+      "sha256": "89480d11281a183e92f66c808fdf60509c3f16586f5981b61c872436b2b08620"
+    },
+    "models/final_model.joblib": {
+      "bytes": 1088608,
+      "sha256": "62602adba42087252e6b07da889e8b0ca1421d61464db84ee3a3e65ba64db1ee"
+    },
+    "outputs/shap_values.csv": {
+      "bytes": 987593,
+      "sha256": "808c2cf571d78287366b39d4ea386f84bf600b4d3ad336927e7598fd5cb55e71"
+    },
+    "outputs/VOLT_PATROL_RANKING_COMPLETO.csv": {
+      "bytes": 1667704,
+      "sha256": "10377e227939d456ad81535be760c5f9293bf107ca4dad38a79eb62fa8dff908"
+    },
+    "outputs/VOLT_PATROL_TOP_76.csv": {
+      "bytes": 31125,
+      "sha256": "6ba5ca6e8fd57ed7770603b7a4dd571080081691cfc65930246971ca1aa79b27"
+    },
+    "reports/data_dictionary.csv": {
+      "bytes": 13574,
+      "sha256": "7b10364d1846829f58716a11359931b3f5306eaeaf2160b5d483f573bdc8bbef"
+    },
+    "reports/feature_importance.csv": {
+      "bytes": 340,
+      "sha256": "5637e191f20d4d82af5a10c5d518473fa6b9ea161856aa891230f91964777950"
+    },
+    "reports/file_summary.csv": {
+      "bytes": 401,
+      "sha256": "adca7aaf5eb619e1b07916298c6ba8edf634a5192f903355ab229a8429a98c0c"
+    },
+    "reports/final_report.md": {
+      "bytes": 2149,
+      "sha256": "13de3c80e858b9667d56b4ad42b34f2ad97d09941e6ddeed399a44fe32684767"
+    },
+    "reports/method_catalog_summary.csv": {
+      "bytes": 454,
+      "sha256": "58ff3933973355881b2702ef6a4af8dfadd73d5361e8e55ee01139ce46af9e7a"
+    },
+    "reports/method_class_metrics.csv": {
+      "bytes": 488,
+      "sha256": "98130c584ef620cd20c5717f07e99ae5c9b11c2dfc463b2418bf8256c058a2a3"
+    },
+    "reports/method_confusion.csv": {
+      "bytes": 371,
+      "sha256": "366f74078b69272da791b88e5762f97129f036716aaf25205b04a068f830a6db"
+    },
+    "reports/method_experiments.csv": {
+      "bytes": 301,
+      "sha256": "2a864dc94056304fbdc089173928d2c2fa767316005b641579b8a9281fb41d78"
+    },
+    "reports/model_comparison.csv": {
+      "bytes": 4527,
+      "sha256": "2ae5e91d37499deaf9d2fbfe76e05b9c9145d0e7611b274f4671d343673e6156"
+    },
+    "reports/model_summary.json": {
+      "bytes": 4109,
+      "sha256": "5e20761dec471c96ecc76b003dce8b3e0decd07e15baa1505dc8a4d04eff9130"
+    },
+    "reports/recovery_curve.csv": {
+      "bytes": 13040,
+      "sha256": "0a7ffe453653bce3538bdfaeafc6404a67440be0d33e8a0dfbd3329973b97488"
+    },
+    "reports/split_integrity.json": {
+      "bytes": 411,
+      "sha256": "0d295d124914cff3f2abddf1459ee9d3b98fdee00bb7f6a202978d0fd559103f"
+    }
+  }
+}

@@ -10,7 +10,7 @@ def _window(values: np.ndarray, n: int, prefix: str) -> dict[str, float]:
     x = values[-n:]
     good = x[np.isfinite(x)]
     out = {f"{prefix}_available": len(good), f"{prefix}_zeros": int(np.sum(good == 0))}
-    for key in ("mean", "median", "minimum", "maximum", "std", "cv", "slope", "last", "drop", "drop_relative", "zero_streak", "decrease_streak", "level_change", "robust_z"):
+    for key in ("mean", "median", "minimum", "maximum", "std", "cv", "slope", "last", "drop", "drop_relative", "zero_streak", "decrease_streak", "level_change", "robust_z", "relative_slope", "last_ratio", "relative_change", "zero_fraction"):
         out[f"{prefix}_{key}"] = np.nan
     if len(good) == 0:
         return out
@@ -21,22 +21,33 @@ def _window(values: np.ndarray, n: int, prefix: str) -> dict[str, float]:
                 f"{prefix}_std": std, f"{prefix}_cv": std / (np.mean(good)+1e-6),
                 f"{prefix}_last": float(good[-1]),
                 f"{prefix}_robust_z": float((good[-1]-median)/(1.4826*np.median(np.abs(good-median))+1e-6))})
+    out[f"{prefix}_last"] = float(x[-1])
     if len(good) > 1:
-        dif = np.diff(good)
-        out[f"{prefix}_slope"] = float(np.polyfit(np.arange(len(good)),good,1)[0])
-        out[f"{prefix}_drop"] = float(np.min(dif))
-        out[f"{prefix}_drop_relative"] = float(np.min(dif/(good[:-1]+1e-6)))
-        out[f"{prefix}_level_change"] = float(np.mean(good[-max(1,len(good)//2):])-np.mean(good[:max(1,len(good)//2)]))
+        # Missing calendar months must not become adjacent measurements.
+        dif = np.diff(x)
+        adjacent = np.isfinite(dif)
+        out[f"{prefix}_slope"] = float(np.polyfit(np.flatnonzero(np.isfinite(x)),good,1)[0])
+        if adjacent.any():
+            out[f"{prefix}_drop"] = float(np.min(dif[adjacent]))
+            out[f"{prefix}_drop_relative"] = float(np.min((dif/(np.abs(x[:-1])+1))[adjacent]))
+        midpoint=max(1,len(x)//2)
+        if np.isfinite(x[:midpoint]).any() and np.isfinite(x[midpoint:]).any():
+            out[f"{prefix}_level_change"] = float(np.nanmean(x[midpoint:])-np.nanmean(x[:midpoint]))
         streak = 0
         for d in dif[::-1]:
             if d < 0: streak += 1
             else: break
         out[f"{prefix}_decrease_streak"] = streak
     streak = 0
-    for value in good[::-1]:
+    for value in x[::-1]:
         if value == 0: streak += 1
         else: break
     out[f"{prefix}_zero_streak"] = streak
+    out[f"{prefix}_relative_slope"] = out[f"{prefix}_slope"]/(median+1)
+    out[f"{prefix}_last_ratio"] = out[f"{prefix}_last"]/(median+1)
+    out[f"{prefix}_relative_change"] = out[f"{prefix}_level_change"]/(median+1)
+    out[f"{prefix}_zero_fraction"] = float(np.mean(good == 0))
+    out[f"{prefix}_robust_z"] = float(np.clip(out[f"{prefix}_robust_z"],-30,30))
     return out
 
 
@@ -48,15 +59,20 @@ def consumption_features(base: pd.DataFrame, monthly: pd.DataFrame) -> pd.DataFr
         ident = getattr(row, "SUMINISTRO_ID")
         cutoff = pd.Timestamp(getattr(row, "cutoff"))
         m = series.get(ident)
-        if m is None:
-            x = np.array([], dtype=float)
-        else:
-            available = m[m.nominal_month.lt(cutoff) & m.reading_date.lt(cutoff)]
-            x = available.daily_kwh.to_numpy(dtype=float)[-12:]
+        end = cutoff.to_period("M").start_time
+        grid = pd.date_range(end=end-pd.offsets.MonthBegin(1),periods=12,freq="MS")
+        x = np.full(12,np.nan)
+        if m is not None:
+            available = m[m.nominal_month.lt(end) & m.reading_date.lt(cutoff)]
+            if available.nominal_month.duplicated().any():
+                raise ValueError("Hay lecturas duplicadas del mismo suministro y mes")
+            x = available.set_index("nominal_month").daily_kwh.reindex(grid).to_numpy(dtype=float)
         record = {"SUMINISTRO_ID":ident, "months_observed":int(np.isfinite(x).sum()),
                   "months_missing_or_invalid":int(np.isnan(x).sum())}
         for n in (3,6,12):
             record.update(_window(x,n,f"w{n}"))
+        recent=x[-3:]; previous=x[-6:-3]
+        record["recent_baseline_ratio"] = float(np.nanmean(recent)/(np.nanmean(previous)+1)) if np.isfinite(recent).any() and np.isfinite(previous).any() else np.nan
         records.append(record)
     return pd.DataFrame(records, index=base.index)
 
@@ -98,6 +114,8 @@ def _annual_sed(base: pd.DataFrame, data: pd.DataFrame, year_col: str, value_col
 def _peer_features(feature: pd.DataFrame, base: pd.DataFrame) -> pd.DataFrame:
     """Leave-one-out mean; avoids using the customer's own value as its reference."""
     x = feature["w6_median"]
+    if "SED_ID" not in base:
+        return pd.DataFrame(index=base.index)
     group = base["SED_ID"].fillna("UNKNOWN")
     count = x.groupby(group).transform("count")
     total = x.groupby(group).transform("sum")
