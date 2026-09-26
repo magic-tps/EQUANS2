@@ -4,7 +4,7 @@ Volt Patrol prioriza inspecciones eléctricas con evidencia de consumo. Incluye 
 
 **[Abrir el dashboard](https://magic-tps-equans2-app-cyow2q.streamlit.app/)**
 
-## Dashboard 2.0
+## Dashboard 2.1
 
 - **Centro de control:** cobertura, primera ronda, señales observadas, concentración por SED y mapa de consumo.
 - **Priorizar inspecciones:** búsqueda, filtros, selección de suministros, estados, notas y exportación del plan.
@@ -14,6 +14,31 @@ Volt Patrol prioriza inspecciones eléctricas con evidencia de consumo. Incluye 
 - **Laboratorio de modelos:** selección, prueba final, control comparable, estabilidad y diferencias de población.
 - **Evaluar nueva data:** Excel/CSV, corte configurable, validación, inferencia y descargas sin reentrenamiento.
 - **Calidad y trazabilidad:** lecturas faltantes, diccionario, cobertura y comprobación de particiones.
+- **Campañas mensuales:** capacidad, exploración sin historial, responsables, evidencias, resultados, costos y recuperos. La cartera JSON se guarda y se restaura entre sesiones, sin una base externa ni almacenamiento compartido de cargas.
+- **Entrega al jurado:** una lista única 2024–2025, Top 76, auditoría de procedencia y evaluación con etiquetas reales cuando existan.
+- **Escala y sostenibilidad:** benchmark de un millón, SED retenidas, evaluación temporal, reglas de referencia, monitoreo de distribución y escenarios económicos con supuestos aportados por el operador.
+
+## Entregable
+
+La lámina del concurso informa **76 hurtos reales en el conjunto ciego**; no revela sus identidades. Sin una plantilla adicional, se prepara un CSV de una columna `SUMINISTRO_ID`, ordenado de mayor a menor prioridad:
+
+- [ENTREGA_RANKING.csv](runtime/outputs/delivery/ENTREGA_RANKING.csv): **6.567 suministros únicos**, unión de 2024 y 2025; se utiliza el año más reciente disponible de cada suministro.
+- [ENTREGA_TOP_76.csv](runtime/outputs/delivery/ENTREGA_TOP_76.csv): primeras 76 posiciones de esa misma lista.
+- [RANKING_AUDITABLE.csv](runtime/outputs/delivery/RANKING_AUDITABLE.csv): score, estado, año y corte utilizado; alternativas por año en la misma carpeta.
+
+Los suministros sin evidencia suficiente permanecen al final; no se afirma que su orden refleje riesgo. El score no se presenta como una probabilidad calibrada. La interpretación de la unión de años está documentada y se conservan las alternativas anuales si el organizador aclara un alcance diferente.
+
+La pantalla «Entrega al jurado» calcula precisión @76 sólo cuando se aportan resultados reales de sus 76 primeras posiciones. También permite comparar una lista del procedimiento actual con las mismas etiquetas, sin inventar una línea base de EQUANS. [Revisión de la rúbrica](RUBRICA.md).
+
+## Procesamiento masivo
+
+```powershell
+python -m src.batch entrada.csv ranking.csv --year 2025 --cutoff 2026-01-01 --batch-size 10000
+```
+
+Utiliza el mismo pipeline que Streamlit. Lee por lotes, comprueba duplicados entre lotes y ordena globalmente mediante SQLite temporal local. El corte común es explícito para que el tamaño del lote no cambie las ventanas de consumo. La salida se reemplaza sólo si termina correctamente y los temporales se eliminan también ante errores.
+
+Se ejecutó una prueba de **1.000.000 de suministros** con datos replicados para carga, sin utilizarlos como evidencia de precisión. Tiempo, pico de RAM muestreado y equipo constan en [scale_benchmark.json](runtime/reports/scale_benchmark.json). La prueba verifica el orden completo y la conservación de filas. No equivale a soportar ese archivo en la memoria de Streamlit Cloud: su carga interactiva conserva el límite de 100 MB.
 
 ## Ejecución local
 
@@ -37,6 +62,8 @@ Se compararon tres conjuntos de variables, dos algoritmos y mezclas del ensamble
 | Positivos conocidos en Top 76 | 75 | 74 |
 | Recall conocido @76 | 3,84% | 3,79% |
 | AP observable | 0,822 | 0,861 |
+
+El **AUC ROC observable del detector es 0,680**. El Recall@200 es 9,67% y el Recall@500 es 22,98%. El denominador de recall es 1.954 positivos conocidos: al revisar 76, el máximo posible en esta prueba es 3,89%. Estas métricas no corresponden al conjunto ciego de 76 hurtos reales. El AUC del clasificador de origen, mostrado aparte, mide otra tarea.
 
 El modelo elegido recuperó un caso conocido adicional en Top 76, pero tuvo menor AP. Esto no demuestra una mejora general ni confirma infractores en la población objetivo.
 
@@ -68,9 +95,16 @@ Coloca en `data/` los siete originales: `ALIMENTADOR_2024.xlsx`, `ALIMENTADOR_20
 ```powershell
 pip install -r requirements-train.txt
 python main.py
+python -m src.robustness
+python -m src.delivery
+python -m src.benchmark_scale
 python -m src.package_runtime
 python -m unittest discover -s tests -v
 python -m src.benchmark
 ```
 
 `main.py` audita los originales y entrena desde cero, sin cargar modelos, rankings ni métricas anteriores. `src.package_runtime` actualiza únicamente la lista explícita de archivos publicables, verifica cobertura y particiones y genera el manifiesto. Conserva juntos modelo, reportes y dependencias de la misma ejecución.
+
+Las auditorías complementarias usan configuraciones fijas, SED fuera del entrenamiento y periodos posteriores. No se usan para seleccionar nuevamente la arquitectura tras observar la prueba. Los empates de las métricas se resuelven por hash de identificador, sin favorecer el orden de filas agrupadas por etiqueta.
+
+Para continuar una campaña otro día, guarda su cartera JSON y restáurala en «Campañas mensuales». No se promete persistencia del disco de Streamlit Cloud. Las cargas de evaluación no se guardan permanentemente ni reentrenan el modelo.

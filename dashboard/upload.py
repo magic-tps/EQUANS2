@@ -37,7 +37,7 @@ def render(ranking,bundle,budget):
             st.session_state["upload_content_hash"]=content_hash
             st.session_state.pop("upload_result",None)
         frame=st.session_state["upload_parsed"]
-        errors,info=validate(frame)
+        errors,info=validate(frame,allow_insufficient=True)
         a,b,c,d=st.columns(4)
         for column,label,value in [(a,"Filas",len(frame)),(b,"Suministros",info["supplies"]),(c,"Columnas",info["columns"]),(d,"Meses completos",len(info["months"]))]:
             with column:theme.metric(label,number(value))
@@ -48,8 +48,8 @@ def render(ranking,bundle,budget):
             for error in errors:st.error(error)
             for warning in info["warnings"]:st.warning(warning)
         if errors:return
-        monthly=monthly_long(frame,year)
-        observed=monthly.loc[monthly.daily_kwh.notna(),"nominal_month"]
+        monthly=monthly_long(frame,year) if info["months"] else pd.DataFrame()
+        observed=monthly.loc[monthly.daily_kwh.notna(),"nominal_month"] if not monthly.empty else pd.Series(dtype="datetime64[ns]")
         default_cut=observed.max()+pd.offsets.MonthBegin(1) if not observed.empty else pd.Timestamp(year+1,1,1)
         cutoff=st.date_input("Fecha de corte para la evaluación",value=default_cut.date(),key=f"cutoff_{content_hash[:8]}_{year}",
             help="Se usan únicamente meses anteriores al mes del corte y lecturas anteriores a esta fecha")

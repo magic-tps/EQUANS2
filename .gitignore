@@ -33,3 +33,12 @@ __pycache__/
 !runtime/reports/method_class_metrics.csv
 !runtime/reports/method_experiments.csv
 !runtime/reports/recovery_curve.csv
+!runtime/reports/geographic_validation.csv
+!runtime/reports/rolling_validation.csv
+!runtime/reports/operational_baselines.csv
+!runtime/outputs/delivery/RANKING_AUDITABLE.csv
+!runtime/outputs/delivery/ENTREGA_RANKING.csv
+!runtime/outputs/delivery/ENTREGA_TOP_76.csv
+!runtime/outputs/delivery/ALTERNATIVA_2024.csv
+!runtime/outputs/delivery/ALTERNATIVA_2025.csv
+!runtime/outputs/delivery/shap_values.csv

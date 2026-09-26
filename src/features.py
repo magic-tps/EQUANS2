@@ -51,7 +51,7 @@ def _window(values: np.ndarray, n: int, prefix: str) -> dict[str, float]:
     return out
 
 
-def consumption_features(base: pd.DataFrame, monthly: pd.DataFrame) -> pd.DataFrame:
+def _consumption_features_reference(base: pd.DataFrame, monthly: pd.DataFrame) -> pd.DataFrame:
     """Each row's own cutoff controls its observations, including duplicate IDs at different cuts."""
     series = {key: group.sort_values("nominal_month") for key,group in monthly.groupby("SUMINISTRO_ID",sort=False)}
     records = []
@@ -75,6 +75,68 @@ def consumption_features(base: pd.DataFrame, monthly: pd.DataFrame) -> pd.DataFr
         record["recent_baseline_ratio"] = float(np.nanmean(recent)/(np.nanmean(previous)+1)) if np.isfinite(recent).any() and np.isfinite(previous).any() else np.nan
         records.append(record)
     return pd.DataFrame(records, index=base.index)
+
+
+def _matrix_window(values: np.ndarray, n: int, prefix: str) -> dict:
+    """Same definitions as _window, evaluated over a batch of supplies."""
+    import warnings
+    x=values[:,-n:];valid=np.isfinite(x);count=valid.sum(axis=1)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore",RuntimeWarning)
+        mean=np.nanmean(x,axis=1);median=np.nanmedian(x,axis=1);std=np.nanstd(x,axis=1)
+        last_position=np.where(valid,np.arange(n),-1).max(axis=1)
+        last_good=x[np.arange(len(x)),np.maximum(last_position,0)]
+        mad=np.nanmedian(np.abs(x-median[:,None]),axis=1)
+        position=np.arange(n,dtype=float)[None,:]
+        xm=np.sum(np.where(valid,position,0),axis=1)/np.maximum(count,1)
+        numerator=np.nansum((position-xm[:,None])*(x-mean[:,None]),axis=1)
+        denominator=np.sum(np.where(valid,(position-xm[:,None])**2,0),axis=1)
+        slope=np.divide(numerator,denominator,out=np.full(len(x),np.nan),where=count>1)
+        # Preserve legacy floating-point signs near zero: existing trees can have
+        # split borders there. Only these exceptional rows need the reference fit.
+        near_zero=(count>1)&(np.abs(slope)<1e-12*np.maximum(1,np.abs(mean)))
+        for i in np.flatnonzero(near_zero):
+            slope[i]=np.polyfit(np.flatnonzero(valid[i]),x[i,valid[i]],1)[0]
+        dif=np.diff(x,axis=1)
+        level=np.nanmean(x[:,max(1,n//2):],axis=1)-np.nanmean(x[:,:max(1,n//2)],axis=1)
+        result={"available":count,"zeros":np.sum(x==0,axis=1),"mean":mean,"median":median,
+                "minimum":np.nanmin(x,axis=1),"maximum":np.nanmax(x,axis=1),"std":std,
+                "cv":std/(mean+1e-6),"last":x[:,-1],"slope":slope,
+                "drop":np.nanmin(dif,axis=1),"drop_relative":np.nanmin(dif/(np.abs(x[:,:-1])+1),axis=1),
+                "zero_streak":np.cumprod(x[:,::-1]==0,axis=1).sum(axis=1).astype(float),
+                "decrease_streak":np.cumprod(dif[:,::-1]<0,axis=1).sum(axis=1).astype(float),
+                "level_change":level,"robust_z":np.clip((last_good-median)/(1.4826*mad+1e-6),-30,30),
+                "relative_slope":slope/(median+1),"last_ratio":x[:,-1]/(median+1),
+                "relative_change":level/(median+1),"zero_fraction":np.sum(x==0,axis=1)/np.maximum(count,1)}
+        result["decrease_streak"][count<2]=np.nan
+        for name,value in result.items():
+            if name not in ("available","zeros"):value[count==0]=np.nan
+    return {f"{prefix}_{name}":value for name,value in result.items()}
+
+
+def consumption_features(base: pd.DataFrame, monthly: pd.DataFrame) -> pd.DataFrame:
+    """Vectorized calendar lookup. Cuts, gaps and invalid readings retain their meaning."""
+    if base.empty:return pd.DataFrame(index=base.index)
+    cuts=pd.to_datetime(base["cutoff"])
+    if cuts.isna().any():raise ValueError("Hay fechas de corte inválidas")
+    months=cuts.dt.year.to_numpy()*12+cuts.dt.month.to_numpy()-1
+    grid=months[:,None]+np.arange(-12,0)[None,:]
+    lookup=monthly.copy()
+    lookup["_month"]=lookup.nominal_month.dt.year*12+lookup.nominal_month.dt.month-1
+    if lookup.duplicated(["SUMINISTRO_ID","_month"]).any():
+        raise ValueError("Hay lecturas duplicadas del mismo suministro y mes")
+    index=pd.MultiIndex.from_arrays([np.repeat(base.SUMINISTRO_ID.astype(str).to_numpy(),12),grid.ravel()],names=["SUMINISTRO_ID","_month"])
+    selected=lookup.set_index(["SUMINISTRO_ID","_month"])[["daily_kwh","reading_date"]].reindex(index)
+    eligible=selected.reading_date.to_numpy(dtype="datetime64[ns]")<np.repeat(cuts.to_numpy(dtype="datetime64[ns]"),12)
+    x=np.where(eligible,selected.daily_kwh.to_numpy(dtype=float),np.nan).reshape(-1,12)
+    records={"SUMINISTRO_ID":base.SUMINISTRO_ID.to_numpy(),"months_observed":np.isfinite(x).sum(axis=1),
+             "months_missing_or_invalid":np.isnan(x).sum(axis=1)}
+    for n in (3,6,12):records.update(_matrix_window(x,n,f"w{n}"))
+    recent=x[:,-3:];previous=x[:,-6:-3]
+    recent_count=np.isfinite(recent).sum(axis=1);previous_count=np.isfinite(previous).sum(axis=1)
+    ratio=(np.nansum(recent,axis=1)/np.maximum(recent_count,1))/(np.nansum(previous,axis=1)/np.maximum(previous_count,1)+1)
+    records["recent_baseline_ratio"]=np.where((recent_count>0)&(previous_count>0),ratio,np.nan)
+    return pd.DataFrame(records,index=base.index)
 
 
 def _asof_sed(base: pd.DataFrame, balance: pd.DataFrame) -> pd.DataFrame:

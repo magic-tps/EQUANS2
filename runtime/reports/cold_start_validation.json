@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "available_calendar_months": 0,
+      "input_supplies": 100,
+      "output_supplies": 100,
+      "scores": 0,
+      "policy": "Exploración / completar datos"
+    },
+    {
+      "available_calendar_months": 1,
+      "input_supplies": 100,
+      "output_supplies": 100,
+      "scores": 0,
+      "policy": "Exploración / completar datos"
+    },
+    {
+      "available_calendar_months": 2,
+      "input_supplies": 100,
+      "output_supplies": 100,
+      "scores": 0,
+      "policy": "Exploración / completar datos"
+    },
+    {
+      "available_calendar_months": 3,
+      "input_supplies": 100,
+      "output_supplies": 100,
+      "scores": 92,
+      "policy": "Modelo donde las lecturas son válidas"
+    }
+  ],
+  "test_type": "Masked-history compatibility test; not detection accuracy",
+  "limitation": "Sin historial no hay evidencia temporal para este modelo. Se implementa cobertura operativa y exploración, no una probabilidad ficticia. Un predictor alternativo necesita metadatos fechados y validación propia."
+}

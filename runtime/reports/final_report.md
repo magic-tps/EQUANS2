@@ -12,7 +12,9 @@ Variables: `patron_relativo_3_meses`. Selección por Hits@76 y luego AP, antes d
 | Recall conocido@76 | 3.84% | 3.79% |
 | AP observable | 0.822 | 0.861 |
 
-El control se reentrenó con la misma partición. El modelo elegido recupera un caso adicional en Top 76, pero tiene menor AP: no hay evidencia de una mejora general.
+AUC ROC observable del detector: 0.6801432958034801. Se calcula con positivos históricos frente a población sin etiqueta y no debe confundirse con el AUC del clasificador de origen.
+
+El control se reentrenó con la misma partición. Los empates de evaluación se resuelven por hash de ID, sin usar etiquetas ni el orden original. Una mejora puntual en Top 76 no demuestra superioridad general.
 
 Bootstrap por SED: 200 repeticiones; intervalo 95% de Hits@76 73.0–76.0. Describe variación dentro de esta cohorte, no incertidumbre de transferencia a otra población.
 
@@ -24,4 +26,4 @@ F1 macro: 0.216. Exactitud: 23.9%; referencia mayoritaria: 57.4%. Casos de prueb
 
 ## Cobertura y explicación
 
-Ranking: 4904 suministros, 4561 scores válidos. Coincidencia media del Top 76 entre semillas: 73.0%. SHAP explica la media de componentes LightGBM en escala interna; no implica causalidad. El paquete autorizado `runtime/` incluye los CSV, modelo y reportes necesarios para Streamlit. Los originales y las cohortes con intervenciones individuales permanecen locales.
+Ranking: 4904 suministros, 4561 scores válidos. Coincidencia media del Top 76 entre semillas: 73.0%. Las explicaciones se regeneran con `src.delivery` para el componente con mayor peso; SHAP no implica causalidad. El paquete autorizado `runtime/` incluye los CSV, modelo y reportes necesarios para Streamlit. Los originales y las cohortes con intervenciones individuales permanecen locales.

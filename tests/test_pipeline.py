@@ -140,7 +140,7 @@ class PipelineTests(unittest.TestCase):
             from streamlit.testing.v1 import AppTest
         except ImportError:
             self.skipTest("Streamlit no instalado")
-        for page_index in range(8):
+        for page_index in range(11):
             app=AppTest.from_file(str(ROOT/"app.py"),default_timeout=40).run()
             if page_index:
                 app.sidebar.radio[0].set_value(app.sidebar.radio[0].options[page_index]).run()

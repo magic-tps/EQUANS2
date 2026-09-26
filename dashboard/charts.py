@@ -85,7 +85,7 @@ def shap_chart(row):
     fig=go.Figure(go.Bar(x=values.values,y=[feature_label(k) for k in values.index],orientation="h",
         marker_color=[AMBER if x>0 else BLUE for x in values.values],
         hovertemplate="%{y}<br>Aporte %{x:.3f}<extra></extra>"))
-    fig.update_layout(xaxis_title="Aporte al componente LightGBM · escala interna",yaxis_title=None)
+    fig.update_layout(xaxis_title="Aporte al componente explicado · escala interna",yaxis_title=None)
     return polish(fig,360)
 
 

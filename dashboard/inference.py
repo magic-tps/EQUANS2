@@ -14,18 +14,19 @@ def read_upload(name: str, content: bytes) -> pd.DataFrame:
     if not content:
         raise ValueError("El archivo está vacío")
     if name.lower().endswith(".xlsx"):
-        return pd.read_excel(BytesIO(content))
+        return pd.read_excel(BytesIO(content),dtype={"SUMINISTRO_ID":"str"})
     if name.lower().endswith(".csv"):
-        return pd.read_csv(BytesIO(content))
+        return pd.read_csv(BytesIO(content),dtype={"SUMINISTRO_ID":"str"})
     raise ValueError("Formato no compatible: use .xlsx o .csv")
 
 
 def infer(bundle: dict, frame: pd.DataFrame, year: int, cutoff=None, progress=None) -> pd.DataFrame:
-    errors,_=validate(frame)
+    errors,info=validate(frame,allow_insufficient=True)
     if errors:raise ValueError("No se puede ejecutar Volt Patrol. " + "; ".join(errors))
     base=frame.copy().reset_index(drop=True)
     base["SUMINISTRO_ID"]=base.SUMINISTRO_ID.astype(str).str.strip()
-    monthly=monthly_long(base,year)
+    monthly=monthly_long(base,year) if info["months"] else pd.DataFrame({"SUMINISTRO_ID":pd.Series(dtype=str),
+        "nominal_month":pd.Series(dtype="datetime64[ns]"),"reading_date":pd.Series(dtype="datetime64[ns]"),"daily_kwh":pd.Series(dtype=float)})
     if cutoff is None:
         available=monthly.loc[monthly.daily_kwh.notna(),"nominal_month"]
         cutoff=available.max()+pd.offsets.MonthBegin(1) if not available.empty else pd.Timestamp(year+1,1,1)
@@ -39,6 +40,8 @@ def infer(bundle: dict, frame: pd.DataFrame, year: int, cutoff=None, progress=No
     if bundle.get("pipeline_version",1)>=2:
         from src.evidence import enrich_ranking
         ranked=enrich_ranking(ranked,base,features,bundle)
+    ranked["review_action"]=ranked.valid_prediction.map({True:"Inspección priorizada",False:"Completar datos / verificación exploratoria"})
+    ranked["cutoff"]=pd.Timestamp(cutoff).date().isoformat()
     if progress:progress(1.,"Ranking listo")
     return ranked
 

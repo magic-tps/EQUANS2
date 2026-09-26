@@ -124,6 +124,12 @@ def models(ranking,bundle,budget):
     with c:theme.metric("AP observable",number(validation.get("average_precision_observable"),3))
     with d:theme.metric("Estabilidad Top 76",f"{bundle.get('top76_overlap',0):.1%}","Solapamiento medio en el alimentador objetivo entre semillas")
     theme.note("La población sin etiqueta puede incluir vulneraciones no descubiertas. Estas métricas no miden precisión real de hurto ni garantizan el resultado de las inspecciones del alimentador objetivo.")
+    a,b,c=st.columns(3)
+    with a:theme.metric("AUC ROC observable",number(validation.get("roc_auc_observable"),3),"Distingue positivos conocidos frente a población sin etiqueta; no negativos verificados")
+    with b:theme.metric("Recall conocido @200",f"{validation.get('recall_known_200',0):.2%}")
+    with c:theme.metric("Recall conocido @500",f"{validation.get('recall_known_500',0):.2%}")
+    positives=bundle.get("split_counts",{}).get("test",{}).get("positive",0)
+    if positives:st.caption(f"La prueba contiene {positives:,} positivos conocidos. Al revisar 76 casos, el Recall@76 máximo posible es {min(76/positives,1):.2%}. El conjunto ciego del concurso tiene otra composición y sus etiquetas no están disponibles.")
     first,second,third=st.tabs(["Prueba final","Selección de arquitectura","Variables y trazabilidad"])
     with first:
         st.subheader("Comparación con el modelo de control")
@@ -159,7 +165,8 @@ def models(ranking,bundle,budget):
         if not importance.empty:
             top=importance.head(12).sort_values("mean_abs_shap")
             fig=go.Figure(go.Bar(x=top.mean_abs_shap,y=top.feature.map(feature_label),orientation="h",marker_color=charts.TEAL))
-            fig.update_layout(xaxis_title="Media del aporte SHAP absoluto · LightGBM")
+            component=data.metadata("reports/delivery_manifest.json").get("shap_component","LightGBM")
+            fig.update_layout(xaxis_title=f"Media del aporte SHAP absoluto · {component}")
             charts.draw(charts.polish(fig,370),"global_shap")
         st.write(f"Versión {bundle.get('version')} · entrenamiento {bundle.get('trained_at','')[:10]} · semilla {bundle.get('seed')}")
         with st.expander("Configuración reproducible"):

@@ -5,7 +5,7 @@ import pandas as pd
 from src.preprocess import find_month_columns
 
 
-def validate(frame: pd.DataFrame) -> tuple[list[str],dict]:
+def validate(frame: pd.DataFrame,allow_insufficient: bool=False) -> tuple[list[str],dict]:
     errors=[]
     warnings=[]
     if frame.empty: errors.append("El archivo está vacío")
@@ -31,6 +31,8 @@ def validate(frame: pd.DataFrame) -> tuple[list[str],dict]:
             reading=pd.to_datetime(frame[fields["reading"]],errors="coerce")
             invalid=int((consumption.lt(0)|(~days.between(1,45)&days.notna())|(reading.isna()&frame[fields["reading"]].notna())).sum())
             if invalid:warnings.append(f"Mes {n}: {invalid} filas con consumo negativo, días fuera de 1–45 o fecha inválida")
-    if len(complete)<3:errors.append("Se requieren al menos tres meses con consumo, días facturados y fecha de lectura")
+    if len(complete)<3:
+        message="Se requieren al menos tres meses con consumo, días facturados y fecha de lectura para el score; los demás casos se derivan a completar datos"
+        (warnings if allow_insufficient else errors).append(message)
     return errors,{"months":complete,"rows":len(frame),"columns":len(frame.columns),"warnings":warnings,
                    "supplies":frame.SUMINISTRO_ID.nunique() if "SUMINISTRO_ID" in frame else 0}

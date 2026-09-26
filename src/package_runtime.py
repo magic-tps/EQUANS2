@@ -25,6 +25,11 @@ COPIES=(
     "reports/method_catalog_summary.csv","reports/method_confusion.csv",
     "reports/method_class_metrics.csv","reports/method_experiments.csv",
     "reports/final_report.md",
+    "reports/delivery_manifest.json","reports/scale_benchmark.json","reports/robustness_summary.json",
+    "reports/geographic_validation.csv","reports/rolling_validation.csv","reports/operational_baselines.csv",
+    "reports/cold_start_validation.json",
+    "outputs/delivery/RANKING_AUDITABLE.csv","outputs/delivery/ENTREGA_RANKING.csv","outputs/delivery/ENTREGA_TOP_76.csv",
+    "outputs/delivery/ALTERNATIVA_2024.csv","outputs/delivery/ALTERNATIVA_2025.csv","outputs/delivery/shap_values.csv",
 )
 
 
@@ -38,6 +43,10 @@ def package(root: Path) -> dict:
     summary=json.loads((root/"reports/model_summary.json").read_text(encoding="utf-8"))
     if bundle["trained_at"]!=summary["trained_at"]:
         raise ValueError("El modelo y sus reportes no pertenecen al mismo entrenamiento")
+    for name in ("delivery_manifest.json","robustness_summary.json","scale_benchmark.json"):
+        report=json.loads((root/"reports"/name).read_text(encoding="utf-8"))
+        if report.get("trained_at")!=bundle["trained_at"] or report.get("model_version")!=bundle["version"]:
+            raise ValueError(f"Regenera {name}: pertenece a otra versión del modelo")
     cohort=pd.read_csv(root/"reports/private/cohort_features.csv")
     assert_disjoint(cohort)
     ranking=pd.read_csv(root/"outputs/VOLT_PATROL_RANKING_COMPLETO.csv")
@@ -61,7 +70,9 @@ def package(root: Path) -> dict:
         shutil.copyfile(root/relative,output)
         published.append(output)
     # Keep individual historical labels and cohort IDs local; publish sufficient aggregates.
-    predictions=pd.read_csv(root/"reports/private/test_predictions.csv").sort_values("priority_score",ascending=False,kind="stable")
+    predictions=pd.read_csv(root/"reports/private/test_predictions.csv")
+    predictions["_tie"]=predictions.SUMINISTRO_ID.map(lambda value:hashlib.sha256(str(value).encode()).hexdigest())
+    predictions=predictions.sort_values(["priority_score","_tie"],ascending=[False,True],kind="stable")
     n=min(500,len(predictions));positions=np.arange(1,n+1)
     curve=pd.DataFrame({"position":positions,"known_hits":predictions.label.cumsum().iloc[:n].to_numpy(),
                         "random_reference":positions*predictions.label.mean()})

@@ -1,0 +1,18 @@
+{
+  "model_version": "2.1.0",
+  "geographic_folds": 3,
+  "total_sed_overlap": 0,
+  "rolling_periods": 2,
+  "audit_configuration": {
+    "model": "CatBoost PU",
+    "bags": 3,
+    "iterations": 200,
+    "depth": 4,
+    "learning_rate": 0.04,
+    "ratio_u": 1.0
+  },
+  "limitation": "Auditorías complementarias sobre las cohortes disponibles; no se usan para volver a elegir el modelo ni son una nueva prueba ciega. Hay validación entre SED. U procede de un único alimentador: no puede demostrarse transferencia entre alimentadores completos con ambas clases. Se requieren inspecciones y población sin etiqueta de otras zonas.",
+  "baseline_scope": "Reglas de referencia; el procedimiento operativo actual de EQUANS no fue proporcionado",
+  "official_precision": null,
+  "trained_at": "2026-09-25T19:07:48.638259+00:00"
+}

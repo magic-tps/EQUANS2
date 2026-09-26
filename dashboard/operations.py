@@ -9,6 +9,7 @@ from dashboard.components import number,ranking_table,table_frame,columns,downlo
 
 def overview(ranking,bundle,budget):
     theme.heading("01","Una inspección mejor informada.","Prioriza suministros, revisa señales y prepara la siguiente ronda con evidencia de consumo.")
+    st.caption("Esta vista operativa muestra el alimentador 2025. «Entrega al jurado» reúne 2024 y 2025 en una sola lista sin duplicados.")
     valid=ranking[ranking.valid_prediction]
     top=valid.head(budget)
     cols=st.columns(4)
@@ -157,7 +158,10 @@ def investigate(ranking,bundle,budget):
             matching=shap[shap.SUMINISTRO_ID.eq(supply)] if not shap.empty else pd.DataFrame()
             if row.valid_prediction and not matching.empty:
                 charts.draw(charts.shap_chart(matching.iloc[0]),"supply_shap")
-                st.caption(f"SHAP de los componentes LightGBM (peso {1-bundle.get('catboost_weight',0):.0%}). Aportes positivos empujan su score hacia casos históricos positivos. No establecen causalidad.")
+                explanation=data.metadata("reports/delivery_manifest.json")
+                component=explanation.get("shap_component","LightGBM")
+                weight=explanation.get("shap_component_weight",1-bundle.get("catboost_weight",0))
+                st.caption(f"SHAP de los componentes {component} (peso {weight:.0%}), en escala interna. Aportes positivos empujan su score hacia casos históricos positivos. No establecen causalidad.")
             else:st.info("No hay explicación de un score válido para este suministro.")
         with right:
             st.subheader("Qué tan consistente es la señal")

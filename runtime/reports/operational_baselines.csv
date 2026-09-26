@@ -1,0 +1,6 @@
+reference,hits_76,ap_observable,lift_observable_76
+Modelo elegido (prueba original),75.0,0.822152720076313,1.4570314604298908
+Mayor caída relativa reciente,75.0,0.7624652609327549,1.4570314604298908
+Mayor cantidad de ceros recientes,69.0,0.7217750652942738,1.3404689435954997
+Mayor variabilidad relativa,58.0,0.7388015766317075,1.1267709960657823
+Selección aleatoria (esperanza),51.474523396880414,,1.0

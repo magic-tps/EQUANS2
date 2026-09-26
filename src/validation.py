@@ -1,18 +1,23 @@
 from __future__ import annotations
 
 import numpy as np
+import hashlib
 from sklearn.metrics import average_precision_score, roc_auc_score
 
 KS = (10,25,50,76,100,200,500)
 
 
-def observable_metrics(y, scores) -> dict[str,float]:
+def observable_metrics(y, scores, ids=None) -> dict[str,float]:
     """Known positives versus unlabeled records, never verified specificity."""
     y = np.asarray(y,dtype=int)
     scores = np.asarray(scores,dtype=float)
-    order = np.argsort(-scores,kind="stable")
+    # A label-grouped input order must not turn tied rule scores into perfect hits.
+    # Real IDs give row-order invariance; the fallback is a fixed random permutation.
+    ties=np.asarray([hashlib.sha256(str(value).encode()).hexdigest() for value in ids]) if ids is not None else np.random.default_rng(2046).permutation(len(y))
+    order = np.lexsort((ties,-scores))
     ranked = y[order]
     result = {"average_precision_observable":float(average_precision_score(y,scores))}
+    result["roc_auc_observable"]=float(roc_auc_score(y,scores)) if len(np.unique(y))==2 else None
     for k in KS:
         top = ranked[:min(k,len(y))]
         hits = int(top.sum())

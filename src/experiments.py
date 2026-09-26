@@ -60,7 +60,7 @@ def bootstrap(test,scores,iterations=200):
     for _ in range(iterations):
         ix=np.concatenate([groups[k] for k in rng.integers(0,len(groups),len(groups))])
         if test.iloc[ix].label.nunique()<2:continue
-        m=observable_metrics(test.iloc[ix].label,scores[ix])
+        m=observable_metrics(test.iloc[ix].label,scores[ix],test.iloc[ix].SUMINISTRO_ID)
         values.append([m["hits_76"],m["recall_known_76"]])
     limits=np.quantile(values,[.025,.975],axis=0)
     return dict(hits76_low=float(limits[0,0]),hits76_high=float(limits[1,0]),
@@ -92,7 +92,7 @@ def train(root: Path) -> dict:
                 if kind=="catboost":cfg.update(depth=trial.suggest_int("depth",4,6),l2_leaf_reg=trial.suggest_float("l2_leaf_reg",3,10))
                 else:cfg.update(num_leaves=trial.suggest_categorical("num_leaves",[11,19,27]),min_child_samples=trial.suggest_int("min_child_samples",30,70))
                 fitted=fit_bags(xp,xu,kind,cfg,SEED,2)
-                m=observable_metrics(ysel,bag_predictions(fitted,xv))
+                m=observable_metrics(ysel,bag_predictions(fitted,xv),splits["selection"].SUMINISTRO_ID)
                 trials.append(dict(feature_set=name,model=kind,trial=trial.number,**cfg,**m))
                 return m["hits_76"]+.01*m["average_precision_observable"]
             study=optuna.create_study(direction="maximize",sampler=optuna.samplers.TPESampler(seed=SEED))
@@ -100,11 +100,11 @@ def train(root: Path) -> dict:
             configs[kind]=study.best_params
             models[kind]=fit_bags(xp,xu,kind,configs[kind],SEED+100,3)
             predictions[kind]=bag_predictions(models[kind],xv)
-            comparison.append(dict(model=f"{name}/{kind}",split="selection",**observable_metrics(ysel,predictions[kind])))
+            comparison.append(dict(model=f"{name}/{kind}",split="selection",**observable_metrics(ysel,predictions[kind],splits["selection"].SUMINISTRO_ID)))
         blends=[]
         for weight in (0.,.25,.5,.75,1.):
             pred=weight*predictions["catboost"]+(1-weight)*predictions["lightgbm"]
-            blends.append((observable_metrics(ysel,pred),weight))
+            blends.append((observable_metrics(ysel,pred,splits["selection"].SUMINISTRO_ID),weight))
         metrics,weight=max(blends,key=lambda item:metric_key(item[0]))
         candidates[name]=dict(feature_columns=cols,preprocessor=prep,config=configs,**models,catboost_weight=weight,selection=metrics)
         comparison.append(dict(model=name,split="selection",**metrics))
@@ -114,14 +114,14 @@ def train(root: Path) -> dict:
     print("[3/7] Prueba final congelada:",chosen,flush=True)
     test=splits["test"]
     selected_scores=score_features(selected,test).priority_score.to_numpy()
-    test_metrics=observable_metrics(test.label,selected_scores)
+    test_metrics=observable_metrics(test.label,selected_scores,test.SUMINISTRO_ID)
     comparison.append(dict(model="selected_ensemble",split="test",**test_metrics))
-    baseline_metrics=observable_metrics(test.label,score_features(candidates["multiventana_control"],test).priority_score)
+    baseline_metrics=observable_metrics(test.label,score_features(candidates["multiventana_control"],test).priority_score,test.SUMINISTRO_ID)
     comparison.append(dict(model="multiventana_control",split="test",**baseline_metrics))
     cols=selected["feature_columns"]
     xt=selected["preprocessor"].transform(splits["train"][cols]);xte=selected["preprocessor"].transform(test[cols])
     anomaly=IsolationForest(n_estimators=150,random_state=SEED,n_jobs=4).fit(xt[splits["train"].label.eq(0)])
-    comparison.append(dict(model="isolation_forest",split="test",**observable_metrics(test.label,-anomaly.score_samples(xte))))
+    comparison.append(dict(model="isolation_forest",split="test",**observable_metrics(test.label,-anomaly.score_samples(xte),test.SUMINISTRO_ID)))
     ci=bootstrap(test,selected_scores)
     pd.DataFrame(comparison).to_csv(root/"reports/model_comparison.csv",index=False)
     pd.DataFrame(trials).to_csv(root/"reports/optuna_trials.csv",index=False)
@@ -140,7 +140,7 @@ def train(root: Path) -> dict:
     print("[5/7] Ajuste final desde los originales",flush=True)
     prep=SimpleImputer(strategy="median",keep_empty_features=True);xf=prep.fit_transform(final[cols]);yf=final.label.to_numpy()
     fitted={kind:fit_bags(xf[yf==1],xf[yf==0],kind,selected["config"][kind],SEED+300,5) for kind in ("catboost","lightgbm")}
-    bundle=dict(version="2.0.0",pipeline_version=2,trained_at=datetime.now(timezone.utc).isoformat(),
+    bundle=dict(version="2.1.0",pipeline_version=2,trained_at=datetime.now(timezone.utc).isoformat(),
         preprocessor=prep,feature_columns=cols,**fitted,catboost_weight=selected["catboost_weight"],config=selected["config"],
         seed=SEED,positive_count=int(yf.sum()),unlabeled_count=int((yf==0).sum()),validation=test_metrics,
         selection_metrics=selected["selection"],baseline_test=baseline_metrics,selected_feature_set=chosen,
@@ -187,8 +187,10 @@ def write_reports(root,bundle,output,elapsed):
         f"| Hits@76 | {bundle['validation']['hits_76']} | {bundle['baseline_test']['hits_76']} |\n"
         f"| Recall conocido@76 | {bundle['validation']['recall_known_76']:.2%} | {bundle['baseline_test']['recall_known_76']:.2%} |\n"
         f"| AP observable | {bundle['validation']['average_precision_observable']:.3f} | {bundle['baseline_test']['average_precision_observable']:.3f} |\n\n"
-        "El control se reentrenó con la misma partición. El modelo elegido recupera un caso adicional en Top 76, "
-        "pero tiene menor AP: no hay evidencia de una mejora general.\n\n"
+        f"AUC ROC observable del detector: {bundle['validation'].get('roc_auc_observable','No disponible')}. "
+        "Se calcula con positivos históricos frente a población sin etiqueta y no debe confundirse con el AUC del clasificador de origen.\n\n"
+        "El control se reentrenó con la misma partición. Los empates de evaluación se resuelven por hash de ID, "
+        "sin usar etiquetas ni el orden original. Una mejora puntual en Top 76 no demuestra superioridad general.\n\n"
         f"Bootstrap por SED: {bundle['bootstrap']['replicates']} repeticiones; intervalo 95% de Hits@76 "
         f"{bundle['bootstrap']['hits76_low']:.1f}–{bundle['bootstrap']['hits76_high']:.1f}. "
         "Describe variación dentro de esta cohorte, no incertidumbre de transferencia a otra población.\n\n"
@@ -205,7 +207,7 @@ def write_reports(root,bundle,output,elapsed):
         "los criterios definidos antes de evaluar. Sólo una inspección puede confirmar una vulneración.\n\n"
         f"## Cobertura y explicación\n\nRanking: {len(output)} suministros, {int(output.valid_prediction.sum())} scores válidos. "
         f"Coincidencia media del Top 76 entre semillas: {bundle['top76_overlap']:.1%}. "
-        "SHAP explica la media de componentes LightGBM en escala interna; no implica causalidad. "
+        "Las explicaciones se regeneran con `src.delivery` para el componente con mayor peso; SHAP no implica causalidad. "
         "El paquete autorizado `runtime/` incluye los CSV, modelo y reportes necesarios para Streamlit. "
         "Los originales y las cohortes con intervenciones individuales permanecen locales.\n")
     for name in ("final_report.md","validation_results.md"):(root/"reports"/name).write_text(report,encoding="utf-8")

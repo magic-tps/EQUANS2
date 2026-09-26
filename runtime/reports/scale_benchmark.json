@@ -1,0 +1,22 @@
+{
+  "supplies": 1000000,
+  "valid_scores": 930086,
+  "seconds": 75.799,
+  "output_bytes": 377687161,
+  "batch_cutoff": "2026-01-01",
+  "global_order": "priority_score DESC, SUMINISTRO_ID ASC; unknown scores last",
+  "test_type": "synthetic_load_replicating_real_rows_not_accuracy",
+  "rows": 1000000,
+  "batch_size": 10000,
+  "input_bytes": 323160298,
+  "peak_rss_mb": 373.03,
+  "load_seconds": 0.587,
+  "python": "3.14.7",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cpu_count": 32,
+  "ram_gb": 63.72,
+  "model_version": "2.1.0",
+  "global_order_verified": true,
+  "identity_uniqueness_enforced": true,
+  "trained_at": "2026-09-25T19:07:48.638259+00:00"
+}
