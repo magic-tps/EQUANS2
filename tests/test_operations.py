@@ -11,7 +11,7 @@ import pandas as pd
 from dashboard.inference import infer,read_upload,to_xlsx
 from src.batch import rank_batches
 from src.campaigns import empty_portfolio,create_campaign,update_entries,dumps,loads,campaign_metrics,exploration_queue
-from src.features import consumption_features,_consumption_features_reference
+from src.features import consumption_features,_consumption_features_reference,_matrix_window
 from src.preprocess import monthly_long
 from src.monitoring import evaluate_top,drift,scenario
 from src.validation import observable_metrics
@@ -139,6 +139,12 @@ class OperationsTests(unittest.TestCase):
         raw=pd.DataFrame({"SUMINISTRO_ID":["00123","00456"]})
         for name,content in (("ids.csv",raw.to_csv(index=False).encode()),("ids.xlsx",to_xlsx(raw))):
             self.assertEqual(read_upload(name,content).SUMINISTRO_ID.tolist(),raw.SUMINISTRO_ID.tolist())
+
+    def test_numerical_zero_is_canonical_for_tree_inputs(self):
+        values=np.array([[0.,1/31,0.],[1/30,1/30,1/30],[1e8,1e8,1e8]])
+        feature=_matrix_window(values,3,"w3")
+        np.testing.assert_array_equal(feature["w3_slope"],np.zeros(3))
+        np.testing.assert_array_equal(feature["w3_cv"][1:],np.zeros(2))
 
 
 if __name__=="__main__":unittest.main()

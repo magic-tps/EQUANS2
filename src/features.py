@@ -16,6 +16,7 @@ def _window(values: np.ndarray, n: int, prefix: str) -> dict[str, float]:
         return out
     median = float(np.median(good))
     std = float(np.std(good))
+    if std<1e-12*max(1,abs(float(np.mean(good)))):std=0.
     out.update({f"{prefix}_mean": float(np.mean(good)), f"{prefix}_median": median,
                 f"{prefix}_minimum": float(np.min(good)), f"{prefix}_maximum": float(np.max(good)),
                 f"{prefix}_std": std, f"{prefix}_cv": std / (np.mean(good)+1e-6),
@@ -27,6 +28,7 @@ def _window(values: np.ndarray, n: int, prefix: str) -> dict[str, float]:
         dif = np.diff(x)
         adjacent = np.isfinite(dif)
         out[f"{prefix}_slope"] = float(np.polyfit(np.flatnonzero(np.isfinite(x)),good,1)[0])
+        if abs(out[f"{prefix}_slope"])<1e-12*max(1,abs(float(np.mean(good)))):out[f"{prefix}_slope"]=0.
         if adjacent.any():
             out[f"{prefix}_drop"] = float(np.min(dif[adjacent]))
             out[f"{prefix}_drop_relative"] = float(np.min((dif/(np.abs(x[:-1])+1))[adjacent]))
@@ -48,7 +50,7 @@ def _window(values: np.ndarray, n: int, prefix: str) -> dict[str, float]:
     out[f"{prefix}_relative_change"] = out[f"{prefix}_level_change"]/(median+1)
     out[f"{prefix}_zero_fraction"] = float(np.mean(good == 0))
     out[f"{prefix}_robust_z"] = float(np.clip(out[f"{prefix}_robust_z"],-30,30))
-    return out
+    return {key:round(value,12) if isinstance(value,(float,np.floating)) and np.isfinite(value) else value for key,value in out.items()}
 
 
 def _consumption_features_reference(base: pd.DataFrame, monthly: pd.DataFrame) -> pd.DataFrame:
@@ -92,11 +94,11 @@ def _matrix_window(values: np.ndarray, n: int, prefix: str) -> dict:
         numerator=np.nansum((position-xm[:,None])*(x-mean[:,None]),axis=1)
         denominator=np.sum(np.where(valid,(position-xm[:,None])**2,0),axis=1)
         slope=np.divide(numerator,denominator,out=np.full(len(x),np.nan),where=count>1)
-        # Preserve legacy floating-point signs near zero: existing trees can have
-        # split borders there. Only these exceptional rows need the reference fit.
+        # Numerical zeros must be the same across BLAS implementations. Otherwise
+        # tree thresholds can learn machine-specific 1e-18 signs, not consumption.
         near_zero=(count>1)&(np.abs(slope)<1e-12*np.maximum(1,np.abs(mean)))
-        for i in np.flatnonzero(near_zero):
-            slope[i]=np.polyfit(np.flatnonzero(valid[i]),x[i,valid[i]],1)[0]
+        slope[near_zero]=0.
+        std[std<1e-12*np.maximum(1,np.abs(mean))]=0.
         dif=np.diff(x,axis=1)
         level=np.nanmean(x[:,max(1,n//2):],axis=1)-np.nanmean(x[:,:max(1,n//2)],axis=1)
         result={"available":count,"zeros":np.sum(x==0,axis=1),"mean":mean,"median":median,
@@ -110,7 +112,9 @@ def _matrix_window(values: np.ndarray, n: int, prefix: str) -> dict:
                 "relative_change":level/(median+1),"zero_fraction":np.sum(x==0,axis=1)/np.maximum(count,1)}
         result["decrease_streak"][count<2]=np.nan
         for name,value in result.items():
-            if name not in ("available","zeros"):value[count==0]=np.nan
+            if name not in ("available","zeros"):
+                value[count==0]=np.nan
+                result[name]=np.round(value,12)
     return {f"{prefix}_{name}":value for name,value in result.items()}
 
 

@@ -140,7 +140,7 @@ def train(root: Path) -> dict:
     print("[5/7] Ajuste final desde los originales",flush=True)
     prep=SimpleImputer(strategy="median",keep_empty_features=True);xf=prep.fit_transform(final[cols]);yf=final.label.to_numpy()
     fitted={kind:fit_bags(xf[yf==1],xf[yf==0],kind,selected["config"][kind],SEED+300,5) for kind in ("catboost","lightgbm")}
-    bundle=dict(version="2.1.0",pipeline_version=2,trained_at=datetime.now(timezone.utc).isoformat(),
+    bundle=dict(version="2.1.1",pipeline_version=3,trained_at=datetime.now(timezone.utc).isoformat(),
         preprocessor=prep,feature_columns=cols,**fitted,catboost_weight=selected["catboost_weight"],config=selected["config"],
         seed=SEED,positive_count=int(yf.sum()),unlabeled_count=int((yf==0).sum()),validation=test_metrics,
         selection_metrics=selected["selection"],baseline_test=baseline_metrics,selected_feature_set=chosen,

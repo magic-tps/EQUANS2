@@ -59,17 +59,17 @@ Se compararon tres conjuntos de variables, dos algoritmos y mezclas del ensamble
 
 | Prueba final | Modelo elegido: patrón relativo de 3 meses | Control multiventana |
 |---|---:|---:|
-| Positivos conocidos en Top 76 | 75 | 74 |
-| Recall conocido @76 | 3,84% | 3,79% |
-| AP observable | 0,822 | 0,861 |
+| Positivos conocidos en Top 76 | 75 | 75 |
+| Recall conocido @76 | 3,84% | 3,84% |
+| AP observable | 0,822 | 0,864 |
 
 El **AUC ROC observable del detector es 0,680**. El Recall@200 es 9,67% y el Recall@500 es 22,98%. El denominador de recall es 1.954 positivos conocidos: al revisar 76, el máximo posible en esta prueba es 3,89%. Estas métricas no corresponden al conjunto ciego de 76 hurtos reales. El AUC del clasificador de origen, mostrado aparte, mide otra tarea.
 
-El modelo elegido recuperó un caso conocido adicional en Top 76, pero tuvo menor AP. Esto no demuestra una mejora general ni confirma infractores en la población objetivo.
+El modelo elegido y el control recuperaron los mismos 75 casos conocidos en Top 76; el elegido tuvo menor AP. La arquitectura se mantuvo según la selección previa, sin ajustarla a esta prueba final. Esto no demuestra una mejora general ni confirma infractores en la población objetivo.
 
-El ranking conserva **4.904 suministros**: **4.561** con score y **343** pendientes de datos válidos recientes. La coincidencia media del Top 76 entre semillas es **73,0%**.
+El ranking conserva **4.904 suministros**: **4.561** con score y **343** pendientes de datos válidos recientes. La coincidencia media del Top 76 entre semillas es **71,7%**.
 
-El clasificador de método obtuvo **F1 macro 0,216** y **23,9% de exactitud**, frente a **57,4%** de la referencia mayoritaria. Por ello, la atribución individual está **deshabilitada**: se muestra «No determinable con estos datos». El catálogo histórico sí conserva las familias documentadas. [Reporte completo](runtime/reports/final_report.md).
+El clasificador de método obtuvo **F1 macro 0,214** y **23,7% de exactitud**, frente a **57,4%** de la referencia mayoritaria. Por ello, la atribución individual está **deshabilitada**: se muestra «No determinable con estos datos». El catálogo histórico sí conserva las familias documentadas. [Reporte completo](runtime/reports/final_report.md).
 
 ## Interpretación y límites
 

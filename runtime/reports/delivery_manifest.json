@@ -9,11 +9,11 @@
   "only_2025": 221,
   "known_blind_thefts": 76,
   "official_precision_at_76": null,
-  "model_version": "2.1.0",
+  "model_version": "2.1.1",
+  "trained_at": "2026-09-26T01:12:34.958526+00:00",
   "ordering": "Score relativo descendente; empate por ID. Sin score al final, sin afirmar un orden de riesgo entre ellos.",
   "no_history_policy": "Verificación exploratoria por SED y rotación mensual; no se inventa probabilidad",
   "shap_component": "CatBoost",
   "shap_component_weight": 1.0,
-  "metric_scope": "Las métricas publicadas corresponden a la prueba histórica; no a las etiquetas del conjunto ciego",
-  "trained_at": "2026-09-25T19:07:48.638259+00:00"
+  "metric_scope": "Las métricas publicadas corresponden a la prueba histórica; no a las etiquetas del conjunto ciego"
 }

@@ -10,7 +10,7 @@ La pantalla de entrega acepta resultados verificados y calcula precisión @76 s�
 
 Pipeline temporal, meses faltantes conservados, identificadores separados entre particiones, preprocesador ajustado en entrenamiento y congelado para inferencia. Pruebas de paridad, serialización, CSV/Excel, datos inválidos y cobertura completa. Los empates de evaluación usan hash de ID sin etiquetas, evitando que una regla con valores iguales se beneficie de que los positivos estén primero en el archivo.
 
-La versión vectorizada reproduce el cálculo de referencia, incluidos signos numéricos cercanos a cero relevantes para árboles existentes. Se comprueban scores sobre toda la población objetivo. SHAP corresponde al componente con mayor peso del modelo, informado explícitamente; no se muestran explicaciones de un componente de peso cero como si decidiera la prioridad.
+La versión vectorizada normaliza ceros numéricos y redondea variables a doce decimales para evitar que los árboles aprendan residuos de cálculo diferentes en Windows y Linux. El modelo se reentrenó con esa misma convención. Se comprueban scores sobre toda la población objetivo. SHAP corresponde al componente con mayor peso del modelo, informado explícitamente; no se muestran explicaciones de un componente de peso cero como si decidiera la prioridad.
 
 ## B2 · Encaje operativo — 20%
 
